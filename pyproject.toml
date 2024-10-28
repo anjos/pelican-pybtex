@@ -32,7 +32,7 @@ classifiers = [
   "Topic :: Internet :: WWW/HTTP",
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-requires-python = ">=3.8.1,<4.0"
+requires-python = ">=3.9,<4.0"
 dependencies = ["pelican>=4.5", "pybtex"]
 
 [project.optional-dependencies]
@@ -48,7 +48,7 @@ channels = ["conda-forge"]
 platforms = ["linux-64", "osx-arm64"]
 
 [tool.pixi.dependencies]
-python = ">=3.8.1,<4.0"
+python = ">=3.9,<4.0"
 pelican = ">=4.5"
 pybtex = "*"
 
@@ -75,10 +75,8 @@ beautifulsoup4 = "*"
 
 [tool.pixi.feature.test.tasks]
 test = "pytest -sv --no-cov tests/"
-test-slow = { cmd = "pytest -sv --no-cov tests/", env = { PYTEST_ADDOPTS = "-m slow" } }
-test-fast = { cmd = "pytest -sv --no-cov tests/", env = { PYTEST_ADDOPTS = "-m '(not slow)'" } }
 test-cov = "pytest -sv --cov-report 'html:html/coverage' tests/"
-test-ci = "cp tests/data/mednet.toml $XDG_CONFIG_HOME && pytest -sv --cov-report 'html:html/coverage' --cov-report 'xml:coverage.xml' --junitxml 'junit-coverage.xml' --ignore '.profile' tests/"
+test-ci = "pytest -sv --cov-report 'html:html/coverage' --cov-report 'xml:coverage.xml' --junitxml 'junit-coverage.xml' --ignore '.profile' tests/"
 
 [tool.pixi.feature.build.dependencies]
 hatch = "*"
@@ -96,8 +94,29 @@ pdbpp = "*"
 [tool.pixi.feature.dev.tasks]
 self-update = "uv pip install --editable . --no-deps --no-build-isolation"
 
+[tool.pixi.feature.py39.dependencies]
+python = "3.9.*"
+
+[tool.pixi.feature.py310.dependencies]
+python = "3.10.*"
+
+[tool.pixi.feature.py311.dependencies]
+python = "3.11.*"
+
+[tool.pixi.feature.py312.dependencies]
+python = "3.12.*"
+
+[tool.pixi.feature.py313.dependencies]
+python = "3.13.*"
+
 [tool.pixi.environments]
 default = { features = ["qa", "build", "test", "dev", "self"] }
+qa = { features = ["qa"] }
+test39 = { features = ["py39", "test", "self"] }
+test310 = { features = ["py310", "test", "self"] }
+test311 = { features = ["py311", "test", "self"] }
+test312 = { features = ["py312", "test", "self"] }
+test313 = { features = ["py313", "test", "self"] }
 
 [tool.hatch.version]
 source = "versioningit"

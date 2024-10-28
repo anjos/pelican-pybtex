@@ -106,11 +106,10 @@ class PublicationGenerator(pelican.generators.Generator):
             tuple[str, pybtex.database.Entry, pybtex.style.FormattedEntry]
         ] = []
         for k in self.bibdata:
-            entries += zip(
+            entries += zip(  # noqa: B905
                 k.entries.keys(),
                 k.entries.values(),
                 plain_style.format_bibliography(k),
-                strict=False,
             )
 
         publications = []
