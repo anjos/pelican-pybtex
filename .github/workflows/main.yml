@@ -31,6 +31,8 @@ jobs:
         run: pixi run -e qa qa
   test:
     name: Test - Python ${{ matrix.python-version }}
+    needs:
+      - qa
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -55,7 +57,6 @@ jobs:
     name: Deploy
     environment: Deployment
     needs:
-      - qa
       - test
     runs-on: ubuntu-latest
     if: github.ref=='refs/heads/main' && github.event_name!='pull_request'
