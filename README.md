@@ -3,7 +3,7 @@ SPDX-FileCopyrightText: Copyright © 2024 André Anjos <andre.dos.anjos@gmail.co
 SPDX-License-Identifier: MIT
 -->
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/pelican-plugins/pelican-pybtex/main.yml?branch=main)](https://github.com/anjos/pelican-pybtex/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/anjos/pelican-pybtex/main.yml?branch=main)](https://github.com/anjos/pelican-pybtex/actions)
 [![PyPI Version](https://img.shields.io/pypi/v/pelican-pybtex)](https://pypi.org/project/pelican-pybtex/)
 [![Downloads](https://img.shields.io/pypi/dm/pelican-pybtex)](https://pypi.org/project/pelican-pybtex/)
 ![License](https://img.shields.io/pypi/l/pelican-pybtex?color=blue)
