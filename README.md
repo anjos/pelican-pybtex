@@ -116,5 +116,5 @@ with the **Contributing Code** section.
 ## License
 
 This project was inspired by the [original BibTeX
-plugin](https://github.com/vene/pelican-pybtex), developed by Vlad Niculae. This project
+plugin](https://github.com/vene/pelican-bibtex), developed by Vlad Niculae. This project
 and further modifications are licensed under the MIT license.
