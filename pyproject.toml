@@ -1,0 +1,217 @@
+# SPDX-FileCopyrightText: Copyright © 2024 André Anjos <andre.dos.anjos@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
+[build-system]
+requires = ["hatchling", "versioningit"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pelican-pybtex"
+version = "1.0.0"
+description = "Manage your academic publications page with Pelican and pybtex (BibTeX)"
+readme = "README.md"
+authors = [{ name = "Andre Anjos", email = "andre.dos.anjos@gmail.com" }]
+license = "MIT"
+keywords = ["pelican", "plugin", "pybtex", "bibtex"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Console",
+  "Framework :: Pelican",
+  "Framework :: Pelican :: Plugins",
+  "Intended Audience :: End Users/Desktop",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+requires-python = ">=3.8.1,<4.0"
+dependencies = ["pelican>=4.5", "pybtex"]
+
+[project.optional-dependencies]
+qa = ["pre-commit"]
+test = ["pytest", "pytest-cov", "beautifulsoup4"]
+
+[project.urls]
+Homepage = "https://github.com/anjos/pelican-pybtex"
+"Issue Tracker" = "https://github.com/anjos/pelican-pybtex/issues"
+
+[tool.pixi.project]
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-arm64"]
+
+[tool.pixi.dependencies]
+python = ">=3.8.1,<4.0"
+pelican = ">=4.5"
+pybtex = "*"
+
+[tool.pixi.tasks]
+compile = "python -m compileall .pixi/envs/$PIXI_ENVIRONMENT_NAME -q"
+
+[tool.pixi.feature.self.pypi-dependencies]
+pelican-pybtex = { path = ".", editable = true }
+
+[tool.pixi.feature.qa.dependencies]
+pre-commit = "*"
+ruff = "*"
+reuse = "*"
+
+[tool.pixi.feature.qa.tasks]
+qa-install = "pre-commit install"
+qa = "pre-commit run --all-files"
+qa-ci = "pre-commit run --all-files --show-diff-on-failure --verbose"
+
+[tool.pixi.feature.test.dependencies]
+pytest = "*"
+pytest-cov = "*"
+beautifulsoup4 = "*"
+
+[tool.pixi.feature.test.tasks]
+test = "pytest -sv --no-cov tests/"
+test-slow = { cmd = "pytest -sv --no-cov tests/", env = { PYTEST_ADDOPTS = "-m slow" } }
+test-fast = { cmd = "pytest -sv --no-cov tests/", env = { PYTEST_ADDOPTS = "-m '(not slow)'" } }
+test-cov = "pytest -sv --cov-report 'html:html/coverage' tests/"
+test-ci = "cp tests/data/mednet.toml $XDG_CONFIG_HOME && pytest -sv --cov-report 'html:html/coverage' --cov-report 'xml:coverage.xml' --junitxml 'junit-coverage.xml' --ignore '.profile' tests/"
+
+[tool.pixi.feature.build.dependencies]
+hatch = "*"
+versioningit = "*"
+twine = "*"
+
+[tool.pixi.feature.build.tasks]
+build = "hatch build"
+check = "twine check dist/*"
+upload = "twine upload dist/*"
+
+[tool.pixi.feature.dev.dependencies]
+pdbpp = "*"
+
+[tool.pixi.feature.dev.tasks]
+self-update = "uv pip install --editable . --no-deps --no-build-isolation"
+
+[tool.pixi.environments]
+default = { features = ["qa", "build", "test", "dev", "self"] }
+
+[tool.hatch.version]
+source = "versioningit"
+
+# versioningit configuration via tool.hatch.version table
+default-version = "0.0.0+unknown"
+next-version.method = "smallest"
+# Example formatted version: 1.2.4-dev42+ge174a1f
+format.distance = "{next_version}.dev{distance}+{vcs}{rev}"
+# Example formatted version: 1.2.4-dev42+ge174a1f.d20230922
+format.distance-dirty = "{next_version}.dev{distance}+{vcs}{rev}.d{build_date:%Y%m%d}"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "src/pelican/plugins/**/*.py",
+  "src/pelican/plugins/templates/publications.html",
+  "LICENSES/*.txt",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pelican"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+force-sort-within-sections = true
+known-first-party = ["pelican"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+src = ["src/pelican"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = [
+  "A",   # https://docs.astral.sh/ruff/rules/#flake8-builtins-a
+  "B",   # https://docs.astral.sh/ruff/rules/#flake8-bugbear
+  "BLE", # https://docs.astral.sh/ruff/rules/#flake8-blind-except
+  "C4",  # https://docs.astral.sh/ruff/rules/#flake8-comprehensions
+  "COM", # https://docs.astral.sh/ruff/rules/#flake8-commas-com
+  "D",   # https://docs.astral.sh/ruff/rules/#pydocstyle-d
+  "E",   # https://docs.astral.sh/ruff/rules/#error-e
+  "F",   # https://docs.astral.sh/ruff/rules/#pyflakes-f
+  "I",   # https://docs.astral.sh/ruff/rules/#isort-i
+  "ICN", # https://docs.astral.sh/ruff/rules/#flake8-import-conventions
+  "ISC", # https://docs.astral.sh/ruff/rules/#flake8-implicit-str-concat-isc
+  "LOG", # https://docs.astral.sh/ruff/rules/#flake8-logging-log
+  "N",   # https://docs.astral.sh/ruff/rules/#pep8-naming-n
+  "NPY", # https://docs.astral.sh/ruff/rules/#numpy-specific-rules-npy
+  "PGH", # https://docs.astral.sh/ruff/rules/#pygrep-hooks
+  "PL",  # https://docs.astral.sh/ruff/rules/#pylint
+  "PTH", # https://docs.astral.sh/ruff/rules/#flake8-use-pathlib-pth
+  "Q",   # https://docs.astral.sh/ruff/rules/#flake8-quotes-q
+  "RET", # https://docs.astral.sh/ruff/rules/#flake8-return-ret
+  "SLF", # https://docs.astral.sh/ruff/rules/#flake8-self-slf
+  "T10", # https://docs.astral.sh/ruff/rules/#flake8-debugger-t10
+  "T20", # https://docs.astral.sh/ruff/rules/#flake8-print-t20
+  "UP",  # https://docs.astral.sh/ruff/rules/#pyupgrade-up
+  "W",   # https://docs.astral.sh/ruff/rules/#warning-w
+  "RUF", # https://docs.astral.sh/ruff/rules/#ruff-specific rules
+  "SIM", # https://docs.astral.sh/ruff/rules/#flake8-simplify
+  "TID", # https://docs.astral.sh/ruff/rules/#flake8-tidy-imports
+  "TRY", # https://docs.astral.sh/ruff/rules/#tryceratops
+  "YTT", # https://docs.astral.sh/ruff/rules/#flake8-2020
+]
+ignore = [
+  "COM812", # https://docs.astral.sh/ruff/rules/missing-trailing-comma/
+  "D100",   # https://docs.astral.sh/ruff/rules/undocumented-public-module/
+  "D102",   # https://docs.astral.sh/ruff/rules/undocumented-public-method/
+  "D104",   # https://docs.astral.sh/ruff/rules/undocumented-public-package/
+  "D105",   # https://docs.astral.sh/ruff/rules/undocumented-magic-method/
+  "D107",   # https://docs.astral.sh/ruff/rules/undocumented-public-init/
+  "D202",   # https://docs.astral.sh/ruff/rules/no-blank-line-after-function/
+  "D205",   # https://docs.astral.sh/ruff/rules/blank-line-after-summary/
+  "D212",   # https://docs.astral.sh/ruff/rules/multi-line-summary-first-line/
+  "D213",   # https://docs.astral.sh/ruff/rules/multi-line-summary-second-line/
+  "E302",   # https://docs.astral.sh/ruff/rules/blank-lines-top-level/
+  "E402",   # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file/
+  "E501",   # https://docs.astral.sh/ruff/rules/line-too-long/
+  "ISC001", # https://docs.astral.sh/ruff/rules/single-line-implicit-string-concatenation/
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/*.py" = ["D", "E501"]
+
+[tool.numpydoc_validation]
+checks = [
+  "all",  # report on all checks, except the ones below
+  "ES01", # Not all functions require extended summaries
+  "EX01", # Not all functions require examples
+  "GL01", # Expects text to be on the line after the opening quotes but that is in direct opposition of the sphinx recommendations and conflicts with other pre-commit hooks.
+  "GL08", # Causes issues if we don't have a docstring at the top of the file. Disabling this might fail to catch actual missing docstrings.
+  "PR04", # numpydoc does not currently support PEP484 typehints, which we are using
+  "RT03", # Since sphinx is unable to understand type annotations we need to remove some types from 'Returns', which breaks this check.
+  "SA01", # We do not use Also sections
+  "SS06", # Summary will span multiple lines if too long because of reformatting by other hooks.
+]
+
+exclude = [ # don't report on objects that match any of these regex
+  '\.__len__$',
+  '\.__getitem__$',
+  '\.__iter__$',
+  '\.__setstate__$',
+  '\.__exit__$',
+]
+
+override_SS05 = [ # override SS05 to allow docstrings starting with these words
+  '^Process ',
+  '^Assess ',
+  '^Access ',
+  '^This',
+]

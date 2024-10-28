@@ -1,0 +1,9 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: pelican-pybtex
+Upstream-Contact: Andre Anjos <andre.dos.anjos@gmail.com>
+Source: https://github.com/anjos/pelican-pybtex
+
+Files:
+ pixi.lock
+Copyright: Copyright © 2024 Andre Anjos <andre.dos.anjos@gmail.com>
+License: MIT

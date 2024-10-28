@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: Copyright © 2024 André Anjos <andre.dos.anjos@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
+*~
+*.swp
+*.pyc
+.nfs*
+.coverage*
+*.DS_Store
+.envrc
+coverage.xml
+test_results.xml
+junit-coverage.xml
+html/
+doc/api/
+dist/
+cache/
+.mypy_cache/
+.pytest_cache/
+.venv/
+.pixi/
+_config/
+_cache/
+_pixi/
+results*/
+tmp*/

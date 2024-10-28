@@ -1,0 +1,43 @@
+<!--
+SPDX-FileCopyrightText: Copyright © 2024 André Anjos <andre.dos.anjos@gmail.com>
+SPDX-License-Identifier: MIT
+-->
+{% extends "base.html" %}
+
+{% block title %}{{ SITENAME|striptags }} - Publications{% endblock %}
+
+{% block content %}
+<article class="pybtex">
+    {% block content_header %}
+    <header>
+        <h2>
+            <a href="{{ SITEURL }}/publications" rel="bookmark" title="Permalink to Publications">Publications</a>
+        </h2>
+        {% import 'translations.html' as translations with context %}
+        {{ translations.translations_for(publications) }}
+    </header>
+    {% endblock %}
+
+    {% block before_content %}
+    {% endblock %}
+
+    <div id="pybtex">
+        {% for group in publications|groupby("year")|reverse %}
+        <h3 id="{{ group.grouper }}">{{ group.grouper }}</h3>
+        {% for item in group.list %}
+        <details id="{{ item.key }}">
+            <summary>{{ item.html }}</summary>
+            <pre>{{ item.bibtex|safe }}</pre>
+        </details>
+        {% endfor %}
+        {% endfor %}
+    </div>
+
+    {% block content_footer %}
+    <footer>
+        <p>Last update: <time datetime="{{ now.isoformat() }}">{{ now.ctime() }}</time></p>
+    </footer>
+    {% endblock %}
+
+</article>
+{% endblock %}
