@@ -11,7 +11,7 @@ SPDX-License-Identifier: MIT
 # pybtex: A Plugin for Pelican
 
 Organize your scientific publications with [pybtex](https://pybtex.org)
-([BibTeX](https://www.bibtex.com/g/bibtex-format/) in [Pelican](https://getpelican.com).
+([BibTeX](https://www.bibtex.com/g/bibtex-format/)) in [Pelican](https://getpelican.com).
 
 ## Installation
 
