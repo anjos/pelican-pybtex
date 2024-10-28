@@ -3494,17 +3494,17 @@ packages:
   timestamp: 1727688156572
 - kind: pypi
   name: pelican-pybtex
-  version: 1.0.0
+  version: 0.0.0+d20241028
   path: .
-  sha256: 77e827c0885cc71578a4e04d099c93126db50750d2f9f1b8f1b24a773eaf6b32
+  sha256: 4c78d16f1564230e01ff15bb3d337114d57bfea2cf531c21ed85bb4ea6e1a804
   requires_dist:
   - pelican>=4.5
   - pybtex
   - pre-commit ; extra == 'qa'
+  - beautifulsoup4 ; extra == 'test'
   - pytest ; extra == 'test'
   - pytest-cov ; extra == 'test'
-  - beautifulsoup4 ; extra == 'test'
-  requires_python: '>=3.9,<4.0'
+  requires_python: <4.0,>=3.9
   editable: true
 - kind: conda
   name: pexpect

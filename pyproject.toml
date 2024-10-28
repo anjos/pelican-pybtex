@@ -8,7 +8,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pelican-pybtex"
-version = "1.0.0"
+dynamic = ["version"]
 description = "Manage your academic publications page with Pelican and pybtex (BibTeX)"
 readme = "README.md"
 authors = [{ name = "Andre Anjos", email = "andre.dos.anjos@gmail.com" }]
