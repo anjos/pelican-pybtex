@@ -52,7 +52,7 @@ jobs:
           auth-host: prefix.dev
           auth-token: ${{ secrets.PREFIX_DEV_TOKEN }}
       - name: Run tests
-        run: pixi run -e test${{ matrix.python-version }} test
+        run: pixi run -e test${{ matrix.python-version }} test-ci
   deploy:
     name: Deploy
     environment: Deployment
