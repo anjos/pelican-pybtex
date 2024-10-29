@@ -38,15 +38,14 @@ entry is a list containing the following fields:
 * `key`: The pybtex (BibTeX) database key
 * `year`: The year of the entry
 * `html`: An HTML-formatted version of the entry
-* `bibtex`: A BibTeX-formatted version of the entry
-* `pdf`: set if present on the BibTeX entry verbatim
-* `slides`: set if present on the BibTeX entry verbatim
-* `poster`: set if present on the BibTeX entry verbatim
+* `bibtex`: A BibTeX-formatted version of the entry, wrapped in a [pygments
+HTML-formatted](https://pygments.org/docs/quickstart/) version.
 
-The configuration has a single entry, that lists sources parsed to populate the
+Use the following configuration key to list sources to be parsed and populate the
 `publications` context:
 
 ```python
+# any pybtex supported input format is accepted
 PYBTEX_SOURCES = ["content/publications.bib"]
 ```
 
@@ -56,6 +55,19 @@ your site.
 
 Note that relative paths are considered with respect to the location of
 `pelicanconf.py`.
+
+### Extra URLs
+
+If you also set `PYBTEX_ADD_ENTRY_URLS = True`, then if any other field in each entry
+contains URLs that are parseable by `urllib.parse`, they will also be included in a
+special dictionary named `urls`, where keys correspond to the BibTeX field name (e.g.
+`url`, or `pdf`), and the value corresponds to a sanitized version of the URL present on
+that field. This can be used, e.g., to include more URLs in a work, and then display
+those using a template override as explained next.
+
+```python
+PYBTEX_ADD_URLS = True
+```
 
 ### Publications page
 
@@ -89,18 +101,8 @@ resolution.  For example, to add a short introductory text, we could override th
 
    ```python
    THEME_TEMPLATES_OVERRIDES = ["templates"]
-   # THEME_STATIC_PATHS = ["static"]  ## this is the default, no need to set it.
+   # STATIC_PATHS = ["static"]  ## if you also have static files to be copied
    ```
-
-### Extending this plugin
-
-A relatively simple but possibly useful extension is to make it possible to write
-internal links in Pelican pages and blog posts that would point to the corresponding
-paper in the Publications page.
-
-A slightly more complicated idea is to support general referencing in articles and
-pages, by having some pybtex entries local to the page, and rendering the bibliography
-at the end of the article, with anchor links pointing to the right place.
 
 ## Contributing
 
