@@ -234,3 +234,12 @@ override_SS05 = [ # override SS05 to allow docstrings starting with these words
   '^Access ',
   '^This',
 ]
+
+[tool.pytest.ini_options]
+addopts = [
+  "--cov=pelican.plugins.pybtex",
+  "--cov-report=term-missing",
+  "--import-mode=append",
+]
+junit_logging = "all"
+junit_log_passing_tests = false
