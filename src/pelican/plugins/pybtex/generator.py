@@ -12,6 +12,9 @@ import pathlib
 import typing
 
 import jinja2
+import pygments
+import pygments.formatters
+import pygments.lexers
 
 import pelican.generators
 import pybtex.backends.html
@@ -114,15 +117,23 @@ class PublicationGenerator(pelican.generators.Generator):
 
         publications = []
         for key, entry, text in entries:
+            # make entry text, and then pass it through pygments for highlighting
+            bibtex = pybtex.database.BibliographyData(entries={key: entry}).to_string(
+                "bibtex"
+            )
+            bibtex_html = pygments.highlight(
+                bibtex,
+                pygments.lexers.BibTeXLexer(),
+                pygments.formatters.HtmlFormatter(),
+            )
+
             assert entry.fields is not None
             publications.append(
                 {
                     "key": key,
                     "year": entry.fields.get("year"),
                     "html": text.text.render(html_backend),
-                    "bibtex": pybtex.database.BibliographyData(
-                        entries={key: entry}
-                    ).to_string("bibtex"),
+                    "bibtex": bibtex_html,
                 }
             )
 

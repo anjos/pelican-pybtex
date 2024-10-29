@@ -27,7 +27,7 @@ SPDX-License-Identifier: MIT
         {% for item in group.list %}
         <details id="{{ item.key }}">
             <summary>{{ item.html }}</summary>
-            <pre>{{ item.bibtex|safe }}</pre>
+            {{ item.bibtex }}
         </details>
         {% endfor %}
         {% endfor %}

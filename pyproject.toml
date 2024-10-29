@@ -32,7 +32,7 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 requires-python = ">=3.9,<4.0"
-dependencies = ["pelican>=4.5", "pybtex"]
+dependencies = ["pelican>=4.5", "pybtex", "pygments>=2.2"]
 
 [project.optional-dependencies]
 qa = ["pre-commit"]
@@ -50,6 +50,7 @@ platforms = ["linux-64", "osx-arm64"]
 python = ">=3.9,<4.0"
 pelican = ">=4.5"
 pybtex = "*"
+pygments = ">=2.2"
 
 [tool.pixi.tasks]
 compile = "python -m compileall .pixi/envs/$PIXI_ENVIRONMENT_NAME -q"
