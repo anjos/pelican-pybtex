@@ -58,13 +58,13 @@ Note that relative paths are considered with respect to the location of
 
 ### Extra fields
 
-If you also set `PYBTEX_ADD_ENTRY_FIELDS`, then if any other field in each entry whose
-name matches the provided values in that variable will also be included in the
-dictionary of each entry. This feature can be used, e.g., to include more URLs in a
-work, and then display those using a template override as explained next.
+If you also set `PYBTEX_ADD_ENTRY_FIELDS`, then if any other field in each matching
+values in this setting will also be included in the dictionary of each entry. This
+feature can be used, e.g., to include more URLs in a work, and then display those using
+a template override as explained next.
 
 ```python
-PYBTEX_ADD_ENTRY_FIELDS = ["url", "pdf"]
+PYBTEX_ADD_ENTRY_FIELDS = ["url", "pdf", "slides", "poster"]
 ```
 
 ### Publications page
@@ -90,6 +90,23 @@ resolution.  For example, to add a short introductory text, we could override th
    {% block before_content %}
    <p id="before-para">This will appear before the publication lists. One could use this
        to display their h-index, provide links to Google Scholar or ORCid.</p>
+   {% endblock %}
+
+   <!-- set PYBTEX_ADD_ENTRY_FIELDS = ["url", "pdf", "slides", "poster"] -->
+   <!-- then, use it in your template override like so: -->
+   {% block content_pybtex %}
+   <div id="pybtex">
+       {% for item in publications %}
+       <details id="{{ item.key }}">
+           <summary>{{ item.html }}</summary>
+           <ul>
+           {% for k in ("url", "pdf", "slides", "poster") %}
+               {% if k in item %}<li>{{ k }}: {{ item[k] }}</li>{% endif %}
+           {% endfor %}
+           </ul>
+       </details>
+       {% endfor %}
+   </div>
    {% endblock %}
    ```
 
