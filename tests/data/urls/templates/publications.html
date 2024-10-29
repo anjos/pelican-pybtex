@@ -1,0 +1,20 @@
+<!--
+SPDX-FileCopyrightText: Copyright © 2024 André Anjos <andre.dos.anjos@gmail.com>
+SPDX-License-Identifier: MIT
+-->
+{% extends "!pybtex/publications.html" %}
+
+{% block content_pybtex %}
+<div id="pybtex">
+    {% for item in publications %}
+    <details id="{{ item.key }}">
+        <summary>{{ item.html }}</summary>
+        <ul>
+        {% for k in ("url", "foo") %}
+            {% if k in item %}<li>{{ k }}: {{ item[k] }}</li>{% endif %}
+        {% endfor %}
+        </ul>
+    </details>
+    {% endfor %}
+</div>
+{% endblock %}

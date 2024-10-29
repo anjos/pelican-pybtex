@@ -32,7 +32,9 @@ def data_path(request, subdir: str) -> pathlib.Path:
 
 @pytest.fixture
 def setup_pelican(
-    caplog, tmp_path, data_path
+    caplog,
+    tmp_path,
+    data_path,
 ) -> tuple[list[logging.LogRecord], pathlib.Path]:
     """Set up and teardown of pelican instance for tests.
 
@@ -89,7 +91,12 @@ def setup_pelican(
         FatalLogger, logging.getLogger("pelican.plugins.pybtex.generator")
     ).disable_filter()
 
-    pelican = Pelican(settings=read_settings(override=settings))
+    if (data_path / "pelicanconf.py").exists():
+        pelican = Pelican(
+            settings=read_settings(data_path / "pelicanconf.py", override=settings)
+        )
+    else:
+        pelican = Pelican(settings=read_settings(override=settings))
     pelican.run()
 
     return caplog.records, tmp_path

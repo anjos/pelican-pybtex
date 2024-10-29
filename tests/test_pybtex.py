@@ -134,6 +134,50 @@ def test_simple(setup_pelican: tuple[list[logging.LogRecord], pathlib.Path]):
     )
 
 
+@pytest.mark.parametrize("subdir", ["urls"])
+def test_urls(setup_pelican: tuple[list[logging.LogRecord], pathlib.Path]):
+    records, pelican_output = setup_pelican
+
+    publications_html = pelican_output / "publications.html"
+    assert publications_html.exists()
+
+    with publications_html.open() as f:
+        soup = BeautifulSoup(f, "html.parser")
+
+    div = soup.find_all("div", id="pybtex")
+    assert len(div) == 1
+
+    publication_keys = [
+        "entries",
+        "noentries",
+    ]
+    details = div[0].find_all("details")
+    assert len(details) == len(publication_keys)
+
+    assert details[0].attrs["id"] == publication_keys[0]
+    items = details[0].find_all("li")
+    items_to_check = ["url", "foo"]
+    assert len(items) == len(items_to_check)
+    for i, k in enumerate(items_to_check):
+        assert items[i].text.startswith(k + ":")
+
+    assert details[1].attrs["id"] == publication_keys[1]
+    items = details[1].find_all("li")
+    assert len(items) == 0
+
+    for detail in details:
+        # should correspond to one of the expected entries
+        assert detail.attrs["id"] in publication_keys
+
+    _assert_log_no_errors(records)
+    _assert_log_contains(
+        records,
+        message="plugin detected 2 entries spread across 1 source file",
+        level=logging.INFO,
+        count=1,
+    )
+
+
 @pytest.mark.parametrize("subdir", ["override"])
 def test_override(setup_pelican: tuple[list[logging.LogRecord], pathlib.Path]):
     records, pelican_output = setup_pelican

@@ -56,17 +56,15 @@ your site.
 Note that relative paths are considered with respect to the location of
 `pelicanconf.py`.
 
-### Extra URLs
+### Extra fields
 
-If you also set `PYBTEX_ADD_ENTRY_URLS = True`, then if any other field in each entry
-contains URLs that are parseable by `urllib.parse`, they will also be included in a
-special dictionary named `urls`, where keys correspond to the BibTeX field name (e.g.
-`url`, or `pdf`), and the value corresponds to a sanitized version of the URL present on
-that field. This can be used, e.g., to include more URLs in a work, and then display
-those using a template override as explained next.
+If you also set `PYBTEX_ADD_ENTRY_FIELDS`, then if any other field in each entry whose
+name matches the provided values in that variable will also be included in the
+dictionary of each entry. This feature can be used, e.g., to include more URLs in a
+work, and then display those using a template override as explained next.
 
 ```python
-PYBTEX_ADD_URLS = True
+PYBTEX_ADD_ENTRY_FIELDS = ["url", "pdf"]
 ```
 
 ### Publications page

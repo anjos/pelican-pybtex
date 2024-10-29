@@ -103,8 +103,6 @@ class PublicationGenerator(pelican.generators.Generator):
         plain_style = pybtex.style.formatting.plain.Style()
         html_backend = pybtex.backends.html.Backend()
 
-        optionals = ["pdf", "slides", "poster"]
-
         entries: list[
             tuple[str, pybtex.database.Entry, pybtex.style.FormattedEntry]
         ] = []
@@ -128,6 +126,13 @@ class PublicationGenerator(pelican.generators.Generator):
             )
 
             assert entry.fields is not None
+
+            extra_fields = {
+                k: v
+                for k, v in entry.fields.items()
+                if k in self.settings.get("PYBTEX_ADD_ENTRY_FIELDS", [])
+            }
+
             publications.append(
                 {
                     "key": key,
@@ -137,9 +142,7 @@ class PublicationGenerator(pelican.generators.Generator):
                 }
             )
 
-            for opt in optionals:
-                if opt in entry.fields:
-                    publications[-1][opt] = entry.fields[opt]
+            publications[-1].update(extra_fields)
 
         self.context["publications"] = publications
         self.context["now"] = __import__("datetime").datetime.now()
