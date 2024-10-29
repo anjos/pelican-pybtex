@@ -116,7 +116,11 @@ def test_simple(setup_pelican: tuple[list[logging.LogRecord], pathlib.Path]):
         assert detail.attrs["id"] in publication_keys
 
         # it should contain the bibtex entry
-        assert len(detail.find_all("pre")) == 1
+        pre = detail.find_all("pre")
+        assert len(pre) == 1
+
+        # check pygments filtered the BibTeX entry
+        assert "highlight" in pre[0].parent.attrs["class"]
 
         # the bibtex entry should start with @
         assert detail.pre.text.startswith("@")
