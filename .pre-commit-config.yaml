@@ -20,6 +20,7 @@ repos:
     rev: v1.13.0
     hooks:
       - id: mypy
+        exclude: ^tests/.*/pelicanconf\.py$
         args:
           - --install-types
           - --non-interactive

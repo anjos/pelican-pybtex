@@ -58,13 +58,10 @@ def setup_pelican(
     from pelican.log import FatalLogger
     from pelican.settings import read_settings
 
-    content_path = data_path / "content"
-
     settings = {
         "SITEURL": "https://example.com",
         "TIMEZONE": "UTC",
         "THEME": "simple",
-        "PATH": content_path,
         "OUTPUT_PATH": tmp_path,
         # disables generation of all indexes except the main one
         "DIRECT_TEMPLATES": ["index"],
@@ -76,13 +73,7 @@ def setup_pelican(
         "AUTHOR_FEED_RSS": None,
     }
 
-    if content_path.glob("*.bib"):
-        settings["PYBTEX_SOURCES"] = [k.name for k in content_path.glob("*.bib")]
-
-    if (data_path / "templates").exists():
-        settings["THEME_TEMPLATES_OVERRIDES"] = [data_path / "templates"]
-
-    caplog.set_level(logging.INFO)
+    caplog.set_level(logging.DEBUG)
 
     # pelican overrides the default logging class to `pelican.log.FatalLogger`, which
     # includes a de-duplication filter.  Subsequent identical messages are

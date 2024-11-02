@@ -1,0 +1,28 @@
+%% SPDX-FileCopyrightText: Copyright © 2024 André Anjos <andre.dos.anjos-at-gmail.com>
+%% SPDX-License-Identifier: MIT
+
+%% Tests support for extra fields that are carried over to the `publications` context
+
+@article{entries,
+    author = "John Doe",
+    title = "This incredible title",
+    journal = "Journal of journals and periodicals",
+    year = 1901,
+    volume = "50",
+    number = "6",
+    pages = "1143--1148",
+    url = "https://example.com/test/path",
+    foo = "A foo is a bar without the bar and foo added.",
+    excluded = "This will not appear as an entry.",
+}
+
+
+@article{noentries,
+    author = "Joanna Doe",
+    title = "This is another incredible title",
+    journal = "Journal of journals and periodicals",
+    year = 1902,
+    volume = "50",
+    number = "6",
+    pages = "1143--1148",
+}

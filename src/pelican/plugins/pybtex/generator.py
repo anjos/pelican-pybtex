@@ -1,33 +1,25 @@
 # SPDX-FileCopyrightText: Copyright © 2024 André Anjos <andre.dos.anjos@gmail.com>
 #
 # SPDX-License-Identifier: MIT
-"""Populate the context with a list of formatted citations.
+"""Populate generation context with a list of formatted citations."""
 
-The citations are loaded from external BibTeX files, at a configurable path. It can
-generate a ``Publications'' page for academic websites.
-"""
-
+import datetime
+import locale
 import logging
 import pathlib
 import typing
 
 import jinja2
-import pygments
-import pygments.formatters
-import pygments.lexers
 
 import pelican.generators
-import pybtex.backends.html
-import pybtex.database
-import pybtex.database.input.bibtex
-import pybtex.database.output.bibtex
-import pybtex.richtext
-import pybtex.style.formatting.plain
+import pelican.utils
+
+from . import utils
 
 logger = logging.getLogger(__name__)
 
 
-class PublicationGenerator(pelican.generators.Generator):
+class PybtexGenerator(pelican.generators.Generator):
     """Populate context with a list of BibTeX publications.
 
     Parameters
@@ -54,98 +46,69 @@ class PublicationGenerator(pelican.generators.Generator):
                 ]
             )
         )
-        self.bibdata: list[pybtex.database.BibliographyData] = []
 
-        bibtex_parser = pybtex.database.input.bibtex.Parser()
-        for k in kwargs["settings"].get("PYBTEX_SOURCES", []):
-            p = pathlib.Path(k)
+        # validates pybtex sources
+        if not isinstance(kwargs["settings"].get("PYBTEX_SOURCES", []), list | tuple):
+            logger.fatal(
+                f"Setting `PYBTEX_SOURCES` should be a list or tuple, not "
+                f"{type(kwargs['settings']['PYBTEX_SOURCES'])}"
+            )
 
-            if not p.is_absolute():
-                # make it relative to the site path
-                p = kwargs["path"] / p
-
-            if not p.exists():
-                logger.error(f"BibTeX file `{p}` does not exist")
-            else:
-                try:
-                    self.bibdata.append(bibtex_parser.parse_file(str(p)))
-                except pybtex.database.PybtexError as e:
-                    logger.warning(f"`bibtex` plugin failed to parse file `{k}`: {e}")
-                    return
+        self.bibdata = utils.load(
+            kwargs["settings"].get("PYBTEX_SOURCES", []), [kwargs["path"]]
+        )
 
         if not self.bibdata:
-            logger.info("`bibtex` plugin detected no entries.")
+            logger.info("`pybtex` (generator) plugin detected no entries.")
         else:
             sources = len(self.bibdata)
             entries = sum([len(k.entries) for k in self.bibdata])
             logger.info(
-                f"`bibtex` plugin detected {entries} entries spread across "
+                f"`pybtex` plugin detected {entries} entries spread across "
                 f"{sources} source file(s)."
             )
+
+        # signals other interested parties on the same configuration
+        from .signals import pybtex_generator_init
+
+        pybtex_generator_init.send(self)
 
     def generate_context(self):
         """Populate context with a list of BibTeX publications.
 
         The generator context is modified to add a ``publications`` entry containing a
         list dictionaries, each corresponding to a BibTeX entry (in the declared order),
-        with the following keys:
+        with at least the following keys:
 
         * ``key``: The BibTeX database key
         * ``year``: The year of the entry
         * ``html``: An HTML-formatted version of the entry
-        * ``bibtex``: A BibTeX-formatted version of the entry
-        * ``pdf``: set if present on the BibTeX entry verbatim
-        * ``slides``: set if present on the BibTeX entry verbatim
-        * ``poster``: set if present on the BibTeX entry verbatim
+        * ``bibtex``: An HTML-ready (pygments-highlighted) BibTeX-formatted version of
+          the entry
+
+        More keys as defined by ``PYBTEX_ADD_ENTRY_FIELDS`` may also be present in case
+        they are found in the original database entry.  These fields are copied
+        verbatim to this dictionary.
         """
 
-        # format entries
-        plain_style = pybtex.style.formatting.plain.Style()
-        html_backend = pybtex.backends.html.Backend()
+        self.context["publications"] = utils.generate_context(
+            self.bibdata,
+            self.settings.get("PYBTEX_FORMAT_STYLE", "plain"),
+            self.settings.get("PYBTEX_ADD_ENTRY_FIELDS", []),
+        )
 
-        entries: list[
-            tuple[str, pybtex.database.Entry, pybtex.style.FormattedEntry]
-        ] = []
-        for k in self.bibdata:
-            entries += zip(  # noqa: B905
-                k.entries.keys(),
-                k.entries.values(),
-                plain_style.format_bibliography(k),
-            )
+        # get the right formatting for the date
+        default_timezone = self.settings.get("TIMEZONE", "UTC")
+        timezone = getattr(self, "timezone", default_timezone)
+        date = pelican.utils.set_date_tzinfo(datetime.datetime.now(), timezone)
+        date_format = self.settings["DEFAULT_DATE_FORMAT"]
+        if isinstance(date_format, tuple):
+            locale_string = date_format[0]
+            locale.setlocale(locale.LC_ALL, locale_string)
+            date_format = date_format[1]
+        locale_date = date.strftime(date_format)
 
-        publications = []
-        for key, entry, text in entries:
-            # make entry text, and then pass it through pygments for highlighting
-            bibtex = pybtex.database.BibliographyData(entries={key: entry}).to_string(
-                "bibtex"
-            )
-            bibtex_html = pygments.highlight(
-                bibtex,
-                pygments.lexers.BibTeXLexer(),
-                pygments.formatters.HtmlFormatter(),
-            )
-
-            assert entry.fields is not None
-
-            extra_fields = {
-                k: v
-                for k, v in entry.fields.items()
-                if k in self.settings.get("PYBTEX_ADD_ENTRY_FIELDS", [])
-            }
-
-            publications.append(
-                {
-                    "key": key,
-                    "year": entry.fields.get("year"),
-                    "html": text.text.render(html_backend),
-                    "bibtex": bibtex_html,
-                }
-            )
-
-            publications[-1].update(extra_fields)
-
-        self.context["publications"] = publications
-        self.context["now"] = __import__("datetime").datetime.now()
+        self.context["locale_date"] = locale_date
 
     def generate_output(self, writer):
         """Generate a publication list on the website.
@@ -163,6 +126,7 @@ class PublicationGenerator(pelican.generators.Generator):
 
         if not self.bibdata:
             logger.info(f"Not generating `{template}.html` (no entries)")
+            return
 
         save_as = self.settings.get(f"{template.upper()}_SAVE_AS", f"{template}.html")
         url = self.settings.get(f"{template.upper()}_URL", f"{template}.html")

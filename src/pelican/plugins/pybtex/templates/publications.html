@@ -26,7 +26,7 @@ SPDX-License-Identifier: MIT
         {% for group in publications|groupby("year")|reverse %}
         <h3 id="{{ group.grouper }}">{{ group.grouper }}</h3>
             {% for item in group.list %}
-            <details id="{{ item.key }}">
+            <details id="pybtex-{{ item.key }}">
                 <summary>{{ item.html }}</summary>
                 {{ item.bibtex }}
             </details>
@@ -37,7 +37,9 @@ SPDX-License-Identifier: MIT
 
     {% block content_footer %}
     <footer>
-        <p>Last update: <time datetime="{{ now.isoformat() }}">{{ now.ctime() }}</time></p>
+      <p>
+        Last updated: {{ locale_date }}
+      </p>
     </footer>
     {% endblock %}
 

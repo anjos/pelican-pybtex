@@ -63,16 +63,7 @@ def test_empty(setup_pelican: tuple[list[logging.LogRecord], pathlib.Path]):
     records, pelican_output = setup_pelican
 
     publications_html = pelican_output / "publications.html"
-    assert publications_html.exists()
-
-    with publications_html.open() as f:
-        soup = BeautifulSoup(f, "html.parser")
-
-    div = soup.find_all("div", id="pybtex")
-    assert len(div) == 1
-
-    # no publications
-    assert len("".join(div[0].contents).strip()) == 0
+    assert not publications_html.exists()
 
     _assert_log_no_errors(records)
     _assert_log_contains(
@@ -113,7 +104,7 @@ def test_simple(setup_pelican: tuple[list[logging.LogRecord], pathlib.Path]):
 
     for detail in details:
         # should correspond to one of the expected entries
-        assert detail.attrs["id"] in publication_keys
+        assert detail.attrs["id"][len("pybtex-") :] in publication_keys
 
         # it should contain the bibtex entry
         pre = detail.find_all("pre")
@@ -195,8 +186,27 @@ def test_override(setup_pelican: tuple[list[logging.LogRecord], pathlib.Path]):
     div = soup.find_all("div", id="pybtex")
     assert len(div) == 1
 
-    # no publications
-    assert len("".join(div[0].contents).strip()) == 0
+    _assert_log_no_errors(records)
+    _assert_log_contains(
+        records,
+        message="plugin detected 2 entries spread across 1 source file",
+        level=logging.INFO,
+        count=1,
+    )
+
+
+@pytest.mark.parametrize("subdir", ["biblio1"])
+def test_biblio1(setup_pelican: tuple[list[logging.LogRecord], pathlib.Path]):
+    records, pelican_output = setup_pelican
+
+    article_html = pelican_output / "article.html"
+    assert article_html.exists()
+
+    publications_html = pelican_output / "publications.html"
+    assert not publications_html.exists()
+
+    # with article_html.open() as f:
+    #     soup = BeautifulSoup(f, "html.parser")
 
     _assert_log_no_errors(records)
     _assert_log_contains(
