@@ -33,7 +33,7 @@ documentation.
 This plugin reads a user-specified [pybtex supported
 file](https://docs.pybtex.org/formats.html#bibliography-formats) and populates the
 global Jinja2 context used by Pelican with a `publications` entry.  The `publications`
-entry is a list containing the following fields:
+entry is a list of dictionaries, each containing the following fields:
 
 * `label`: The formatted label (depends on the used style, but usually something like
 `3`, `Ein05`, or `Einstein, 1905`).
