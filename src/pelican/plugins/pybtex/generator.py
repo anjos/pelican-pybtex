@@ -48,7 +48,7 @@ class PybtexGenerator(pelican.generators.Generator):
         )
 
         # validates pybtex sources
-        if not isinstance(kwargs["settings"].get("PYBTEX_SOURCES", []), list | tuple):
+        if not isinstance(kwargs["settings"].get("PYBTEX_SOURCES", []), (list, tuple)):
             logger.fatal(
                 f"Setting `PYBTEX_SOURCES` should be a list or tuple, not "
                 f"{type(kwargs['settings']['PYBTEX_SOURCES'])}"
