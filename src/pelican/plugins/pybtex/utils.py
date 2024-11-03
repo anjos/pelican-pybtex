@@ -157,17 +157,16 @@ def generate_context(
     import pybtex.backends.html
     import pybtex.database
 
-    match style_name:
-        case "plain" | "alpha" | "unsrt" | "unsrtalpha":
-            formatter = importlib.import_module(f"pybtex.style.formatting.{style_name}")
-            style = formatter.Style()
-        case _:
-            logger.error(
-                f"Unsupported formatting style `{style_name}`, defaulting to `plain`"
-            )
-            import pybtex.style.formatting.plain
+    if style_name in ("plain", "alpha", "unsrt", "unsrtalpha"):
+        formatter = importlib.import_module(f"pybtex.style.formatting.{style_name}")
+        style = formatter.Style()
+    else:
+        logger.error(
+            f"Unsupported formatting style `{style_name}`, defaulting to `plain`"
+        )
+        import pybtex.style.formatting.plain
 
-            style = pybtex.style.formatting.plain.Style()
+        style = pybtex.style.formatting.plain.Style()
 
     # format all entries in a single shot for speed and meaningful labels
     all_entries = [e for k in bibdata for e in k.entries.values()]
