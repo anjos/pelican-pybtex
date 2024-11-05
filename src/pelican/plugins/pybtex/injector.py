@@ -1,5 +1,4 @@
 # SPDX-FileCopyrightText: Copyright © 2024 André Anjos <andre.dos.anjos@gmail.com>
-#
 # SPDX-License-Identifier: MIT
 """Add references to a parsed content page."""
 
@@ -16,7 +15,10 @@ from .generator import PybtexGenerator
 
 logger = logging.getLogger(__name__)
 
-CITE_RE = re.compile(r"\[&#64;(&#64;)?\s*(\w.*?)\s*\]")
+# acceptable bibtex key characters:
+# https://tex.stackexchange.com/questions/408530/what-characters-are-allowed-to-use-as-delimiters-for-bibtex-keys
+BIBTEX_KEY_RE = r"[!\"\$&'\(\)\*\+\-\.\/:;\<\=\>\?@\[\]\^\`\|\w]+"
+CITE_RE = re.compile(rf"\[(@|&#64;)(@|&#64;)?\s*({BIBTEX_KEY_RE})\s*\]")
 
 
 class PybtexInjector:
@@ -98,11 +100,24 @@ class PybtexInjector:
         template_name = "bibliography"
         template = self.generator.get_template(template_name)
         database = pybtex.database.BibliographyData(entries=content_entries)
+
+        style = self.generator.settings.get("PYBTEX_FORMAT_STYLE", "plain")
+        if "pybtex_format_style" in content.metadata:
+            style = content.metadata.pop("pybtex_format_style").strip() or style
+
+        add_entry_fields = self.generator.settings.get("PYBTEX_ADD_ENTRY_FIELDS", [])
+        if "pybtex_add_entry_fields" in content.metadata:
+            add_entry_fields = (
+                content.metadata.pop("pybtex_add_entry_fields").strip()
+                or add_entry_fields
+            )
+
         context = {
             "publications": utils.generate_context(
                 [database],
-                self.generator.settings.get("PYBTEX_FORMAT_STYLE", "plain"),
-                self.generator.settings.get("PYBTEX_ADD_ENTRY_FIELDS", []),
+                style,
+                add_entry_fields,
+                self.generator.settings.get("PYGMENTS_RST_OPTIONS", {}),
             )
         }
         content._content += template.render(context)  # noqa: SLF001
@@ -118,6 +133,6 @@ class PybtexInjector:
                     f'<a title="click to jump to reference [{lk[key]}]"'
                     f'href="#pybtex-{key}">[{lk[key]}]</a>'
                 )
-            return f'<span title="cannot find citation {key}">[{key}?]</a>'
+            return f'<span title="cannot find citation {key}">[{key}?]</span>'
 
         content._content = CITE_RE.sub(_re_repl, content._content)  # noqa: SLF001

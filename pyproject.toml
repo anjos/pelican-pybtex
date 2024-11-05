@@ -1,5 +1,4 @@
 # SPDX-FileCopyrightText: Copyright © 2024 André Anjos <andre.dos.anjos@gmail.com>
-#
 # SPDX-License-Identifier: MIT
 
 [build-system]
@@ -36,7 +35,7 @@ dependencies = ["pelican>=4.5", "pybtex", "pygments>=2.2"]
 
 [project.optional-dependencies]
 qa = ["pre-commit"]
-test = ["pytest", "pytest-cov", "beautifulsoup4"]
+test = ["pytest", "pytest-cov", "beautifulsoup4", "markdown"]
 
 [project.urls]
 Homepage = "https://github.com/anjos/pelican-pybtex"
@@ -72,6 +71,8 @@ qa-ci = "pre-commit run --all-files --show-diff-on-failure --verbose"
 pytest = "*"
 pytest-cov = "*"
 beautifulsoup4 = "*"
+argcomplete = "*"
+markdown = "*"
 
 [tool.pixi.feature.test.tasks]
 test = "pytest -sv --no-cov tests/"

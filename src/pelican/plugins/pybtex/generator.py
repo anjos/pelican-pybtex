@@ -1,5 +1,4 @@
 # SPDX-FileCopyrightText: Copyright © 2024 André Anjos <andre.dos.anjos@gmail.com>
-#
 # SPDX-License-Identifier: MIT
 """Populate generation context with a list of formatted citations."""
 
@@ -49,24 +48,25 @@ class PybtexGenerator(pelican.generators.Generator):
 
         # validates pybtex sources
         if not isinstance(kwargs["settings"].get("PYBTEX_SOURCES", []), (list, tuple)):
-            logger.fatal(
+            logger.error(
                 f"Setting `PYBTEX_SOURCES` should be a list or tuple, not "
                 f"{type(kwargs['settings']['PYBTEX_SOURCES'])}"
             )
-
-        self.bibdata = utils.load(
-            kwargs["settings"].get("PYBTEX_SOURCES", []), [kwargs["path"]]
-        )
-
-        if not self.bibdata:
-            logger.info("`pybtex` (generator) plugin detected no entries.")
+            self.bibdata = []
         else:
-            sources = len(self.bibdata)
-            entries = sum([len(k.entries) for k in self.bibdata])
-            logger.info(
-                f"`pybtex` plugin detected {entries} entries spread across "
-                f"{sources} source file(s)."
+            self.bibdata = utils.load(
+                kwargs["settings"].get("PYBTEX_SOURCES", []), [kwargs["path"]]
             )
+
+            if not self.bibdata:
+                logger.info("`pybtex` (generator) plugin detected no entries.")
+            else:
+                sources = len(self.bibdata)
+                entries = sum([len(k.entries) for k in self.bibdata])
+                logger.info(
+                    f"`pybtex` plugin detected {entries} entries spread across "
+                    f"{sources} source file(s)."
+                )
 
         # signals other interested parties on the same configuration
         from .signals import pybtex_generator_init
@@ -95,6 +95,7 @@ class PybtexGenerator(pelican.generators.Generator):
             self.bibdata,
             self.settings.get("PYBTEX_FORMAT_STYLE", "plain"),
             self.settings.get("PYBTEX_ADD_ENTRY_FIELDS", []),
+            self.settings.get("PYGMENTS_RST_OPTIONS", {}),
         )
 
         # get the right formatting for the date

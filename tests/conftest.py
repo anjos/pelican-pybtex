@@ -78,9 +78,10 @@ def setup_pelican(
     # pelican overrides the default logging class to `pelican.log.FatalLogger`, which
     # includes a de-duplication filter.  Subsequent identical messages are
     # automoatically suppressed. The next line disables the suppression.
-    typing.cast(
-        FatalLogger, logging.getLogger("pelican.plugins.pybtex.generator")
-    ).disable_filter()
+    for mod in ["generator", "injector", "utils"]:
+        typing.cast(
+            FatalLogger, logging.getLogger(f"pelican.plugins.pybtex.{mod}")
+        ).disable_filter()
 
     if (data_path / "pelicanconf.py").exists():
         pelican = Pelican(

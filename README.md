@@ -32,8 +32,9 @@ documentation.
 
 This plugin reads a user-specified [pybtex supported
 file](https://docs.pybtex.org/formats.html#bibliography-formats) and populates the
-global Jinja2 context used by Pelican with a `publications` entry.  The `publications`
-entry is a list of dictionaries, each containing the following fields:
+global Jinja2 context used by Pelican with a `publications` variable.  The `publications`
+variable is a list of dictionaries itself, each containing the following fields,
+corresponding to individual entries in the provided compatible files:
 
 * `label`: The formatted label (depends on the used style, but usually something like
 `3`, `Ein05`, or `Einstein, 1905`).
@@ -41,10 +42,11 @@ entry is a list of dictionaries, each containing the following fields:
 * `year`: The year of the entry
 * `html`: An HTML-formatted version of the entry
 * `bibtex`: A BibTeX-formatted version of the entry, wrapped in a [pygments
-HTML-formatted](https://pygments.org/docs/quickstart/) version.
+HTML-formatted](https://pygments.org/docs/quickstart/) version. The pygments output
+respects the settings for `PYGMENTS_RST_OPTIONS` in Pelican.
 
-Use the following configuration key to list sources to be parsed and populate the
-`publications` context:
+Use the following Pelican configuration key to list sources to be parsed and populate
+the `publications` context:
 
 ```python
 # any pybtex supported input format is accepted
@@ -56,15 +58,15 @@ reported, but ignored during generation.  Check Pelican logs for details while b
 your site.
 
 Note that relative paths are considered with respect to the location of the setting of
-`PATH` in `pelicanconf.py`.  If `PATH` itself is relative, it is considered relative to
-the location of `pelicanconf.py` itself.
+`PATH` in `pelicanconf.py` (typically the `content` directory).  If `PATH` itself is
+relative, it is considered relative to the location of `pelicanconf.py` itself.
 
 ### Extra fields
 
-If you also set `PYBTEX_ADD_ENTRY_FIELDS`, then if any other field in each matching
-values in this setting will also be included in the dictionary of each entry. This
-feature can be used, e.g., to include more URLs in a work, and then display those using
-a template override as explained next.
+If you also set `PYBTEX_ADD_ENTRY_FIELDS`, then if any other field listed in this
+setting will also be included *verbatim* in the dictionary of each entry. This feature
+can be used, e.g., to include more URLs in a work, and then display those using a
+custom template as explained later.
 
 ```python
 PYBTEX_ADD_ENTRY_FIELDS = ["url", "pdf", "slides", "poster"]
@@ -75,8 +77,10 @@ PYBTEX_ADD_ENTRY_FIELDS = ["url", "pdf", "slides", "poster"]
 By default, `PYBTEX_FORMAT_STYLE` is set to `plain`.  You may further customize this
 setting to one of the biobliography formatting styles supported by pybtex (currently
 "plain", "alpha", "unsrt", and "unsrtalpha").  You may check the formatting style of
-some of these BibTeX styles [on this
-reference](https://www.overleaf.com/learn/latex/Bibtex_bibliography_styles).
+these BibTeX styles [on this
+reference](https://www.overleaf.com/learn/latex/Bibtex_bibliography_styles). We
+currently do not support custom bibliographic styles. Create an issue if you would like
+to work on this.
 
 ### Publications page
 
@@ -140,23 +144,35 @@ restructuredtext or markdown formats, to refer to bibliography entries from the
 `PYBTEX_SOURCES`.  This process is similar to using BibTeX database entries in your
 LaTeX sources by using the `\cite{bibkey}` command. In this case, this plugin will
 replace these citations with links to a bibliography database *injected* at the end of
-the article or post. The global `PYBTEX_FORMAT_STYLE` is respected while formatting
-bibliographies.
+the article or post.
+
+The global `PYBTEX_FORMAT_STYLE` is respected while formatting bibliographies.  You may
+override the style for the current article or page using the metadata entry
+`pybtex_format_style`.  The same mechanism is available for `PYBTEX_ADD_ENTRY_FIELDS`,
+which can be locally overriden by `pybtex_add_entry_fields` metadata entry.
 
 You may also add further enrich article or page metadata defining a specific
 `pybtex_sources`.  In such a case, these files will be loaded respecting the same rules
-as for `PYBTEX_SOURCES`. Specifically, relative paths are considered w.r.t. the location
-of `PATH` in `pelicanconf.py`. Article and page bibliography markers will then be
-resolved by first looking at entries in the local `pybtex_sources`, and then on the
-global `PYBTEX_SOURCES` entry in `pelicanconf.py`.
+as for `PYBTEX_SOURCES`. Specifically, relative paths are first searched at the location
+of the article or page, and then default on using the `PATH` setting in
+`pelicanconf.py`. Article and page bibliography markers will then be resolved by first
+looking at entries in the local `pybtex_sources`, and then on the global
+`PYBTEX_SOURCES` entry in `pelicanconf.py`.
 
 Be aware that in case repeated citation keys are found across all bibliography
 databases, **the last occurence is used** while resolving local bibliography for
 articles an pages.
 
+Finally, local bibliography formatting is controlled by the [default
+`bibliography.html`](src/pelican/plugins/pybtex/templates/biobliography.html) template
+that is shipped with this package.  This templates defines the contents of the
+*injected* bibliography section on articles and pages. You may override this template in
+a similar way to what was explained above for the global `publications.html` template,
+by setting the `THEME_TEMPLATES_OVERRIDES` Pelican variable.
+
 ## Contributing
 
-Contributions are welcome and much appreciated. Every little bit helps. You can
+Contributions are welcome and appreciated. Every little bit helps. You can
 contribute by improving the documentation, adding missing features, and fixing bugs. You
 can also help out by reviewing and commenting on [existing
 issues](https://github.com/anjos/pelican-pybtex/issues).

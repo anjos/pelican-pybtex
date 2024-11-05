@@ -1,5 +1,4 @@
 # SPDX-FileCopyrightText: Copyright © 2024 André Anjos <andre.dos.anjos@gmail.com>
-#
 # SPDX-License-Identifier: MIT
 """Common utilities to load and format bibliography entries."""
 
@@ -69,7 +68,10 @@ def load(
         p = _resolve(pathlib.Path(k), paths)
 
         if not p.exists():
-            logger.error(f"`pybtex` file `{p}` does not exist")
+            logger.error(
+                f"`pybtex` file `{p}` cannot be found on path "
+                f"`{':'.join([str(k) for k in paths])}`"
+            )
         else:
             try:
                 retval.append(bibtex_parser.parse_file(p))
@@ -98,7 +100,9 @@ def format_bibtex(entry: pybtex.database.Entry) -> str:
     )
 
 
-def format_bibtex_pygments(entry: pybtex.database.Entry) -> str:
+def format_bibtex_pygments(
+    entry: pybtex.database.Entry, html_formatter_options: dict[str, typing.Any]
+) -> str:
     """Format a pybtex database entry into a highlight-able HTML/BibTeX
     representation.
 
@@ -106,6 +110,9 @@ def format_bibtex_pygments(entry: pybtex.database.Entry) -> str:
     ----------
     entry
         The entry to be formatted.
+    html_formatter_options
+        A dictionary containing HTML formatting options supported by
+        :py:class:`pygments.formatters.HtmlFormatter`.
 
     Returns
     -------
@@ -115,7 +122,7 @@ def format_bibtex_pygments(entry: pybtex.database.Entry) -> str:
     return pygments.highlight(
         format_bibtex(entry),
         pygments.lexers.BibTeXLexer(),
-        pygments.formatters.HtmlFormatter(),
+        pygments.formatters.HtmlFormatter(**html_formatter_options),
     )
 
 
@@ -123,6 +130,7 @@ def generate_context(
     bibdata: typing.Sequence[pybtex.database.BibliographyData],
     style_name: str,
     extra_fields: typing.Sequence[str],
+    html_formatter_options: dict[str, typing.Any],
 ) -> list[dict[str, str]]:
     """Generate a list of dictionaries given a set of bibliography databases.
 
@@ -135,6 +143,9 @@ def generate_context(
         "plain", "alpha", "unsrt", and "unsrtalpha").
     extra_fields
         Extra fields to be preserved (verbatim) from each entry, if present.
+    html_formatter_options
+        A dictionary containing HTML formatting options supported by
+        :py:class:`pygments.formatters.HtmlFormatter`.
 
     Returns
     -------
@@ -189,7 +200,7 @@ def generate_context(
                 "key": formatted_entry.key,
                 "year": entry.fields.get("year"),
                 "html": formatted_entry.text.render(backend),
-                "bibtex": format_bibtex_pygments(entry),
+                "bibtex": format_bibtex_pygments(entry, html_formatter_options),
             }
         )
 

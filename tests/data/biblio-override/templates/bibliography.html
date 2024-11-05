@@ -1,0 +1,13 @@
+<!--
+SPDX-FileCopyrightText: Copyright © 2024 André Anjos <andre.dos.anjos@gmail.com>
+SPDX-License-Identifier: MIT
+-->
+<h3>References</h3>
+
+{% block bibliography_pybtex %}
+<ul id="pybtex">
+{% for item in publications %}
+    <li id="pybtex-{{item.key}}">[{{ item.label }}] {{ item.html }}</li>
+{% endfor %}
+</ul>
+{% endblock %}
