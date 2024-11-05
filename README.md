@@ -164,7 +164,7 @@ databases, **the last occurence is used** while resolving local bibliography for
 articles an pages.
 
 Finally, local bibliography formatting is controlled by the [default
-`bibliography.html`](src/pelican/plugins/pybtex/templates/biobliography.html) template
+`bibliography.html`](src/pelican/plugins/pybtex/templates/bibliography.html) template
 that is shipped with this package.  This templates defines the contents of the
 *injected* bibliography section on articles and pages. You may override this template in
 a similar way to what was explained above for the global `publications.html` template,
