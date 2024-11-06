@@ -6,38 +6,7 @@ types.
 
 from pybtex.style.formatting import toplevel
 import pybtex.style.formatting.unsrt
-from pybtex.style.formatting.unsrt import date
 from pybtex.style.template import field, node, optional, sentence, tag, words
-
-
-def _monkeypatch_method(cls):
-    def decorator(func):
-        setattr(cls, func.__name__, func)
-        return func
-
-    return decorator
-
-
-@_monkeypatch_method(pybtex.style.formatting.unsrt.Style)
-def get_patent_template(self, e):
-    """Format patent bibtex entry.
-
-    Parameters
-    ----------
-    e
-        The entry to be formatted.
-
-    Returns
-    -------
-        The formatted entry object.
-    """
-    return toplevel[
-        sentence[self.format_names("author")],
-        self.format_title(e, "title"),
-        sentence(capfirst=False)[tag("em")[field("number")], date],
-        optional[self.format_url(e), optional[" (visited on ", field("urldate"), ")"]],
-    ]
-
 
 # format month by converting integers to month name
 _MONTH_NAMES = {
@@ -74,3 +43,34 @@ def _month_field(children, data):
 
 # Ensures we always have the month correctly formatted
 pybtex.style.formatting.unsrt.date = words[_month_field(), field("year")]
+
+
+def _monkeypatch_method(cls):
+    def decorator(func):
+        setattr(cls, func.__name__, func)
+        return func
+
+    return decorator
+
+
+@_monkeypatch_method(pybtex.style.formatting.unsrt.Style)
+def get_patent_template(self, e):
+    """Format patent bibtex entry.
+
+    Parameters
+    ----------
+    e
+        The entry to be formatted.
+
+    Returns
+    -------
+        The formatted entry object.
+    """
+    return toplevel[
+        sentence[self.format_names("author")],
+        self.format_title(e, "title"),
+        sentence(capfirst=False)[
+            tag("em")[field("number")], pybtex.style.formatting.unsrt.date
+        ],
+        optional[self.format_url(e), optional[" (visited on ", field("urldate"), ")"]],
+    ]

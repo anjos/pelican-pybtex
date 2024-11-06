@@ -13,4 +13,6 @@ This is an article
 :summary: Short version for index and feeds
 :pybtex_sources: article.bib
 
-This will be turned into a citation [@@pat].
+This will be turned into a citation [@@pat2].
+
+This will be turned into another citation [@@pat].

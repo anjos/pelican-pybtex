@@ -339,12 +339,16 @@ def test_biblio_patent(setup_pelican: tuple[list[logging.LogRecord], pathlib.Pat
         soup = BeautifulSoup(f, "html.parser")
 
     publication_keys = [
+        "pat2",
         "pat",
     ]
 
     para = soup.find_all("p")
 
-    text_to_be_checked = ((publication_keys[0], "1", para[0]),)
+    text_to_be_checked = (
+        (publication_keys[0], "1", para[0]),
+        (publication_keys[1], "2", para[1]),
+    )
 
     for key, label, paragraph in text_to_be_checked:
         a = paragraph.find_all("a")
@@ -369,6 +373,11 @@ def test_biblio_patent(setup_pelican: tuple[list[logging.LogRecord], pathlib.Pat
 
     # prefixed by "pybtex-"
     assert details[0].attrs["id"].endswith(publication_keys[0])
+    assert details[1].attrs["id"].endswith(publication_keys[1])
+
+    # assert that the month number was correctly translated in both entries
+    assert "March 1876" in details[0].find_all("summary")[0].text
+    assert "March 1876" in details[1].find_all("summary")[0].text
 
     _assert_log_no_errors(records)
     _assert_log_contains(
