@@ -247,3 +247,6 @@ addopts = [
 ]
 junit_logging = "all"
 junit_log_passing_tests = false
+
+[tool.coverage.run]
+relative_files = true
