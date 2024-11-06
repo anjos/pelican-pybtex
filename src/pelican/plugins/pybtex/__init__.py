@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 """Manage your academic publications page with Pelican and pybtex (BibTeX)."""
 
+from . import style as _  # noqa: F401, monkey-patches to support extra entries
 from .injector import PybtexInjector
 
 _injector = PybtexInjector()

@@ -126,12 +126,44 @@ def format_bibtex_pygments(
     )
 
 
+_MONTH_NUMBERS: dict[str, int] = {
+    "unk": 0,
+    "jan": 1,
+    "feb": 2,
+    "mar": 3,
+    "apr": 4,
+    "may": 5,
+    "jun": 6,
+    "jul": 7,
+    "aug": 8,
+    "sep": 9,
+    "oct": 10,
+    "nov": 11,
+    "dec": 12,
+}
+
+
+def _get_month_number(m: str) -> int:
+    """Get the month number or 0, if that is not known.
+
+    Parameters
+    ----------
+    m
+        The name of the month.
+
+    Returns
+    -------
+        An integer, representing the month number.
+    """
+    return _MONTH_NUMBERS[m.lower()[:3]]
+
+
 def generate_context(
     bibdata: typing.Sequence[pybtex.database.BibliographyData],
     style_name: str,
     extra_fields: typing.Sequence[str],
     html_formatter_options: dict[str, typing.Any],
-) -> list[dict[str, str]]:
+) -> list[dict[str, str | int]]:
     """Generate a list of dictionaries given a set of bibliography databases.
 
     Parameters
@@ -153,11 +185,13 @@ def generate_context(
         order) from the input databases. Each entry in the list contains at least the
         following keys:
 
-            * ``key``: The BibTeX database key
-            * ``year``: The year of the entry
-            * ``html``: An HTML-formatted version of the entry
+            * ``label``: The attribute label by the formatting style (str)
+            * ``key``: The BibTeX database key (str)
+            * ``year``: The year of the entry (int)
+            * ``month``: A string-fied version of the month number (int)
+            * ``html``: An HTML-formatted version of the entry (str)
             * ``bibtex``: An HTML-ready (pygments-highlighted) BibTeX-formatted version of
-              the entry
+              the entry (str)
 
         More keys as defined by ``extra_fiedls`` may also be present in case they are
         found in the original database entry.  These fields are copied verbatim to this
@@ -189,7 +223,7 @@ def generate_context(
     ]
 
     backend = pybtex.backends.html.Backend()
-    retval: list[dict[str, str]] = []
+    retval: list[dict[str, str | int]] = []
     for entry, formatted_entry in zip(all_entries, formatted_entries):
         # make entry text, and then pass it through pygments for highlighting
         assert entry.fields is not None
@@ -198,7 +232,8 @@ def generate_context(
             {
                 "label": typing.cast(str, formatted_entry.label),
                 "key": formatted_entry.key,
-                "year": entry.fields.get("year"),
+                "year": int(entry.fields.get("year", 0)),
+                "month": _get_month_number(entry.fields.get("month", "unk")),
                 "html": formatted_entry.text.render(backend),
                 "bibtex": format_bibtex_pygments(entry, html_formatter_options),
             }

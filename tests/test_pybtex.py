@@ -148,6 +148,53 @@ def test_publications_simple(
     )
 
 
+@pytest.mark.parametrize("subdir", ["month-ordering"])
+def test_publications_month_ordering(
+    setup_pelican: tuple[list[logging.LogRecord], pathlib.Path],
+):
+    records, pelican_output = setup_pelican
+
+    publications_html = pelican_output / "publications.html"
+    assert publications_html.exists()
+
+    with publications_html.open() as f:
+        soup = BeautifulSoup(f, "html.parser")
+
+    div = soup.find_all("div", id="pybtex")
+    assert len(div) == 1
+
+    publication_keys = [
+        "month-long",
+        "month-number",
+        "month-short",
+        "no-month",
+    ]
+    details = div[0].find_all("details")
+    assert len(details) == len(publication_keys)
+
+    for k, detail in enumerate(details):
+        # should correspond to one of the expected entries
+        assert detail.attrs["id"][len("pybtex-") :] == publication_keys[k]
+
+        # it should contain the bibtex entry
+        pre = detail.find_all("pre")
+        assert len(pre) == 1
+
+        # check pygments filtered the BibTeX entry
+        assert "highlight" in pre[0].parent.attrs["class"]
+
+        # the bibtex entry should start with @
+        assert detail.pre.text.startswith("@")
+
+    _assert_log_no_errors(records)
+    _assert_log_contains(
+        records,
+        message="plugin detected 4 entries spread across 1 source file",
+        level=logging.INFO,
+        count=1,
+    )
+
+
 @pytest.mark.parametrize("subdir", ["urls"])
 def test_publications_urls(setup_pelican: tuple[list[logging.LogRecord], pathlib.Path]):
     records, pelican_output = setup_pelican
@@ -270,6 +317,57 @@ def test_biblio_at_article(setup_pelican: tuple[list[logging.LogRecord], pathlib
     # prefixed by "pybtex-"
     assert details[0].attrs["id"].endswith(publication_keys[0])
     assert details[1].attrs["id"].endswith(publication_keys[1])
+
+    _assert_log_no_errors(records)
+    _assert_log_contains(
+        records, message="plugin detected no entries", level=logging.INFO, count=1
+    )
+
+
+@pytest.mark.parametrize("subdir", ["biblio-patent"])
+def test_biblio_patent(setup_pelican: tuple[list[logging.LogRecord], pathlib.Path]):
+    records, pelican_output = setup_pelican
+
+    article_html = pelican_output / "article.html"
+    assert article_html.exists()
+
+    publications_html = pelican_output / "publications.html"
+    assert not publications_html.exists()
+
+    with article_html.open() as f:
+        soup = BeautifulSoup(f, "html.parser")
+
+    publication_keys = [
+        "pat",
+    ]
+
+    para = soup.find_all("p")
+
+    text_to_be_checked = ((publication_keys[0], "1", para[0]),)
+
+    for key, label, paragraph in text_to_be_checked:
+        a = paragraph.find_all("a")
+        text_label = f"[{label}]"
+        assert len(a) == 1
+        assert text_label in a[0].attrs["title"]
+        assert a[0].attrs["href"].startswith("#")  # internal
+        assert a[0].attrs["href"].endswith(key)
+        assert a[0].text == text_label
+
+    num_headers = 2
+    h2 = soup.find_all("h2")
+    assert len(h2) == num_headers
+
+    assert h2[1].text.strip() == "Bibliography"
+
+    div = soup.find_all("div", id="pybtex")
+    assert len(div) == 1
+
+    details = div[0].find_all("details")
+    assert len(details) == len(publication_keys)
+
+    # prefixed by "pybtex-"
+    assert details[0].attrs["id"].endswith(publication_keys[0])
 
     _assert_log_no_errors(records)
     _assert_log_contains(
