@@ -88,6 +88,7 @@ twine = "*"
 build = "hatch build"
 check = "twine check dist/*"
 upload = "twine upload dist/*"
+upload-testpypi = "twine upload --repository testpypi dist/*"
 
 [tool.pixi.feature.dev.dependencies]
 pdbpp = "*"
@@ -113,6 +114,7 @@ python = "3.13.*"
 [tool.pixi.environments]
 default = { features = ["qa", "build", "test", "dev", "self"] }
 qa = { features = ["qa"] }
+build = { features = ["build"] }
 test39 = { features = ["py39", "test", "self"] }
 test310 = { features = ["py310", "test", "self"] }
 test311 = { features = ["py311", "test", "self"] }
