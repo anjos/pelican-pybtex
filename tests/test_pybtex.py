@@ -377,7 +377,9 @@ def test_biblio_patent(setup_pelican: tuple[list[logging.LogRecord], pathlib.Pat
 
     # assert that the month number was correctly translated in both entries
     assert "March 1876" in details[0].find_all("summary")[0].text
+    assert "Patent" in details[0].find_all("summary")[0].text
     assert "March 1876" in details[1].find_all("summary")[0].text
+    assert "U.S. Patent" in details[1].find_all("summary")[0].text
 
     _assert_log_no_errors(records)
     _assert_log_contains(

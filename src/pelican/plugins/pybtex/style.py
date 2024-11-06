@@ -4,6 +4,7 @@
 types.
 """
 
+import pybtex.database
 from pybtex.style.formatting import toplevel
 import pybtex.style.formatting.unsrt
 from pybtex.style.template import field, node, optional, sentence, tag, words
@@ -54,7 +55,7 @@ def _monkeypatch_method(cls):
 
 
 @_monkeypatch_method(pybtex.style.formatting.unsrt.Style)
-def get_patent_template(self, e):
+def get_patent_template(self, e: pybtex.database.Entry):
     """Format patent bibtex entry.
 
     Parameters
@@ -66,11 +67,19 @@ def get_patent_template(self, e):
     -------
         The formatted entry object.
     """
+    assert e.fields is not None
+
+    nationality = e.fields.get("nationality", "")
+
+    if nationality.lower() == "united states":
+        nationality = "U.S."
+
     return toplevel[
         sentence[self.format_names("author")],
         self.format_title(e, "title"),
         sentence(capfirst=False)[
-            tag("em")[field("number")], pybtex.style.formatting.unsrt.date
+            tag("em")[optional[nationality, " "], "Patent ", field("number")],
+            pybtex.style.formatting.unsrt.date,
         ],
         optional[self.format_url(e), optional[" (visited on ", field("urldate"), ")"]],
     ]
