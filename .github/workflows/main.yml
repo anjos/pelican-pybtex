@@ -82,7 +82,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: testpypi
-      url: https://test.pypi.org/p/<package-name>
+      url: https://test.pypi.org/p/pelican-pybtex
     permissions:
       id-token: write # IMPORTANT: mandatory for trusted publishing
     steps:
@@ -91,7 +91,7 @@ jobs:
         with:
           name: python-package-distributions
           path: dist/
-      - name: "Publish distribution \U0001F4E6 to TestPyPI"
+      - name: Publish distribution to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
@@ -115,7 +115,7 @@ jobs:
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
   github-release:
-    name: Sign the Python distribution with Sigstore and upload it to GitHub Release
+    name: Sign distribution and upload it to GitHub Release
     needs:
       - publish-to-pypi
     runs-on: ubuntu-latest
