@@ -164,6 +164,7 @@ def test_publications_month_ordering(
     assert len(div) == 1
 
     publication_keys = [
+        "month-number-string",
         "month-long",
         "month-number",
         "month-short",
@@ -189,7 +190,7 @@ def test_publications_month_ordering(
     _assert_log_no_errors(records)
     _assert_log_contains(
         records,
-        message="plugin detected 4 entries spread across 1 source file",
+        message="plugin detected 5 entries spread across 1 source file",
         level=logging.INFO,
         count=1,
     )
