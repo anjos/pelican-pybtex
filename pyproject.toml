@@ -134,8 +134,8 @@ format.distance-dirty = "{next_version}.dev{distance}+{vcs}{rev}.d{build_date:%Y
 
 [tool.hatch.build.targets.sdist]
 include = [
-  "src/pelican/plugins/**/*.py",
-  "src/pelican/plugins/templates/publications.html",
+  "src/pelican/plugins/pybtex/**/*.py",
+  "src/pelican/plugins/pybtex/**/*.html",
   "LICENSES/*.txt",
 ]
 
