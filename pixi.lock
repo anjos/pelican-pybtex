@@ -3790,9 +3790,9 @@ packages:
   timestamp: 1727688156572
 - kind: pypi
   name: pelican-pybtex
-  version: 0.0.1.dev27+g04d8156
+  version: 1.0.1.dev1+g17dfe91
   path: .
-  sha256: d3eca717732b6ed3843f2757e2e6ad5550d5c010a692a8ae29272c8a8a499249
+  sha256: af81bda67018662a2fe75abbde8248a47821b8eb5e19dfb8097550adc95bbe34
   requires_dist:
   - pelican>=4.5
   - pybtex
