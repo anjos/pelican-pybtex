@@ -4,12 +4,13 @@
 
 | Name                                       |    Stmts |     Miss |   Cover |   Missing |
 |------------------------------------------- | -------: | -------: | ------: | --------: |
-| src/pelican/plugins/pybtex/\_\_init\_\_.py |       12 |        0 |    100% |           |
+| src/pelican/plugins/pybtex/\_\_init\_\_.py |       13 |        0 |    100% |           |
 | src/pelican/plugins/pybtex/generator.py    |       47 |        5 |     89% |51-55, 107-109 |
 | src/pelican/plugins/pybtex/injector.py     |       59 |        4 |     93% |70, 97-98, 110 |
 | src/pelican/plugins/pybtex/signals.py      |        2 |        0 |    100% |           |
-| src/pelican/plugins/pybtex/utils.py        |       53 |        6 |     89% |38, 79-80, 175-180 |
-|                                  **TOTAL** |  **173** |   **15** | **91%** |           |
+| src/pelican/plugins/pybtex/style.py        |       26 |        0 |    100% |           |
+| src/pelican/plugins/pybtex/utils.py        |       56 |        6 |     89% |38, 79-80, 209-214 |
+|                                  **TOTAL** |  **203** |   **15** | **93%** |           |
 
 
 ## Setup coverage badge
