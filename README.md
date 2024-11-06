@@ -4,6 +4,7 @@ SPDX-License-Identifier: MIT
 -->
 
 [![Build Status](https://img.shields.io/github/actions/workflow/status/anjos/pelican-pybtex/main.yml?branch=main)](https://github.com/anjos/pelican-pybtex/actions)
+[![Coverage badge](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/anjos/pelican-pybtex/python-coverage-comment-action-data/endpoint.json&label=coverage)](https://htmlpreview.github.io/?https://github.com/anjos/pelican-pybtex/blob/python-coverage-comment-action-data/htmlcov/index.html)
 [![PyPI Version](https://img.shields.io/pypi/v/pelican-pybtex)](https://pypi.org/project/pelican-pybtex/)
 [![Downloads](https://img.shields.io/pypi/dm/pelican-pybtex)](https://pypi.org/project/pelican-pybtex/)
 ![License](https://img.shields.io/pypi/l/pelican-pybtex?color=blue)
