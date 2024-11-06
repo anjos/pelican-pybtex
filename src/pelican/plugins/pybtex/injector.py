@@ -50,6 +50,10 @@ class PybtexInjector:
             The Pelican content object ot modify.
         """
 
+        if not content._content:  # noqa: SLF001
+            # protect against spurious content being parsed
+            return
+
         # 1. grab all citations
         citations = CITE_RE.findall(content._content)  # noqa: SLF001
         if not citations:
