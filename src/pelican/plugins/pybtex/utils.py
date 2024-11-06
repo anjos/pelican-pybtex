@@ -163,7 +163,7 @@ def generate_context(
     style_name: str,
     extra_fields: typing.Sequence[str],
     html_formatter_options: dict[str, typing.Any],
-) -> list[dict[str, str | int]]:
+) -> list[dict[str, typing.Union[str, int]]]:
     """Generate a list of dictionaries given a set of bibliography databases.
 
     Parameters
