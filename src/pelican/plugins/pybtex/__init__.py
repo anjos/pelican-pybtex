@@ -17,6 +17,14 @@ def _get_generators(pelican_object):
     return PybtexGenerator
 
 
+def _get_injector_init(generator):
+    return _injector.init(generator)
+
+
+def _get_injector_solver(content):
+    return _injector.resolve_bibliography(content)
+
+
 def register():
     """Register this plugin to pelican."""
 
@@ -28,5 +36,5 @@ def register():
     pelican.plugins.signals.get_generators.connect(_get_generators)
 
     # Per-content (articles, pages) biobliography injector
-    signals.pybtex_generator_init.connect(_injector.init)
-    pelican.plugins.signals.content_object_init.connect(_injector.resolve_bibliography)
+    signals.pybtex_generator_init.connect(_get_injector_init)
+    pelican.plugins.signals.content_object_init.connect(_get_injector_solver)
