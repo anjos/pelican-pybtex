@@ -182,6 +182,34 @@ To start contributing to this plugin, review the [Contributing to
 Pelican](https://docs.getpelican.com/en/latest/contribute.html) documentation, beginning
 with the **Contributing Code** section.
 
+## Development
+
+This plugin is developed using [pixi](https://pixi.sh).  [Install
+pixi](https://pixi.sh/latest/#installation), then checkout this repository.
+
+Prime the development environment with: `pixi install`, then run test units with:
+
+```sh
+pixi run test
+pixi run test-cov  # runs tests and measures coverage
+```
+
+To run the unit tests for different versions of Python do one or more of the items below:
+
+```sh
+pixi run -e test39 test; done
+pixi run -e test310 test; done
+pixi run -e test311 test; done
+pixi run -e test312 test; done
+pixi run -e test313 test; done
+```
+
+### Releasing
+
+Releasing is based on a GitHub workflow, tied to repository tags on the main development
+branch.  Release deployment is conducted automatically on PyPI and GitHub releases after
+appropriate quality control and testing.
+
 ## License
 
 This project was inspired by the [original BibTeX
