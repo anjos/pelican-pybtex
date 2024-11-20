@@ -197,11 +197,11 @@ pixi run test-cov  # runs tests and measures coverage
 To run the unit tests for different versions of Python do one or more of the items below:
 
 ```sh
-pixi run -e test39 test; done
-pixi run -e test310 test; done
-pixi run -e test311 test; done
-pixi run -e test312 test; done
-pixi run -e test313 test; done
+pixi run -e test39 test
+pixi run -e test310 test
+pixi run -e test311 test
+pixi run -e test312 test
+pixi run -e test313 test
 ```
 
 ### Releasing
