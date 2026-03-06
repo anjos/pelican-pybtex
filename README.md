@@ -9,8 +9,8 @@
 | src/pelican/plugins/pybtex/injector.py     |       61 |        5 |     92% |55, 74, 101-102, 114 |
 | src/pelican/plugins/pybtex/signals.py      |        2 |        0 |    100% |           |
 | src/pelican/plugins/pybtex/style.py        |       30 |        0 |    100% |           |
-| src/pelican/plugins/pybtex/utils.py        |       56 |        6 |     89% |38, 79-80, 221-226 |
-|                                  **TOTAL** |  **213** |   **16** | **92%** |           |
+| src/pelican/plugins/pybtex/utils.py        |       67 |        3 |     96% | 38, 79-80 |
+| **TOTAL**                                  |  **224** |   **13** | **94%** |           |
 
 
 ## Setup coverage badge
