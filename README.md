@@ -76,12 +76,20 @@ PYBTEX_ADD_ENTRY_FIELDS = ["url", "pdf", "slides", "poster"]
 ### Formatting style
 
 By default, `PYBTEX_FORMAT_STYLE` is set to `plain`.  You may further customize this
-setting to one of the biobliography formatting styles supported by pybtex (currently
+setting to one of the bibliography formatting styles supported by pybtex (currently
 "plain", "alpha", "unsrt", and "unsrtalpha").  You may check the formatting style of
-these BibTeX styles [on this
-reference](https://www.overleaf.com/learn/latex/Bibtex_bibliography_styles). We
-currently do not support custom bibliographic styles. Create an issue if you would like
-to work on this.
+these BibTeX styles [on this reference](https://www.overleaf.com/learn/latex/Bibtex_bibliography_styles).
+
+#### Custom formatting styles
+
+You can [write your own pybtex formatting style](https://docs.pybtex.org/api/styles.html#style-api), save it in your projects top level directory (or any other directory included in your `PYTHONPATH`) and tell `pelican-pybtex` to use it by setting:
+
+```python
+PYBTEX_FORMAT_STYLE = "my_custom_style.CustomStyle"
+```
+in your `pelicanconf.py`.
+`my_custom_style` is the python file with your `CustomStyle` class in it.
+Since writing those custom styles is not straight forward, you can take a look at `custom_bibtex_style.py` in the test directory for some inspiration.
 
 ### Publications page
 
@@ -141,7 +149,7 @@ resolution.  For example, to add a short introductory text, we could override th
 ### Local bibliography in articles and pages
 
 You may use markers such as `[@bibkey]` or `[@@bibkey]` on your articles and pages in
-restructuredtext or markdown formats, to refer to bibliography entries from the
+RestructuredText or Markdown formats, to refer to bibliography entries from the
 `PYBTEX_SOURCES`.  This process is similar to using BibTeX database entries in your
 LaTeX sources by using the `\cite{bibkey}` command. In this case, this plugin will
 replace these citations with links to a bibliography database *injected* at the end of
@@ -150,7 +158,7 @@ the article or post.
 The global `PYBTEX_FORMAT_STYLE` is respected while formatting bibliographies.  You may
 override the style for the current article or page using the metadata entry
 `pybtex_format_style`.  The same mechanism is available for `PYBTEX_ADD_ENTRY_FIELDS`,
-which can be locally overriden by `pybtex_add_entry_fields` metadata entry.
+which can be locally overridden by `pybtex_add_entry_fields` metadata entry.
 
 You may also add further enrich article or page metadata defining a specific
 `pybtex_sources`.  In such a case, these files will be loaded respecting the same rules
@@ -161,12 +169,12 @@ looking at entries in the local `pybtex_sources`, and then on the global
 `PYBTEX_SOURCES` entry in `pelicanconf.py`.
 
 Be aware that in case repeated citation keys are found across all bibliography
-databases, **the last occurence is used** while resolving local bibliography for
-articles an pages.
+databases, **the last occurrence is used** while resolving local bibliography for
+articles and pages.
 
 Finally, local bibliography formatting is controlled by the [default
 `bibliography.html`](src/pelican/plugins/pybtex/templates/bibliography.html) template
-that is shipped with this package.  This templates defines the contents of the
+that is shipped with this package. This template defines the contents of the
 *injected* bibliography section on articles and pages. You may override this template in
 a similar way to what was explained above for the global `publications.html` template,
 by setting the `THEME_TEMPLATES_OVERRIDES` Pelican variable.

@@ -719,3 +719,61 @@ def test_biblio_override(setup_pelican: tuple[list[logging.LogRecord], pathlib.P
     _assert_log_contains(
         records, message="plugin detected no entries", level=logging.INFO, count=1
     )
+
+
+@pytest.mark.parametrize("subdir", ["custom-style-fallback"])
+def test_custom_style_fallback(
+    setup_pelican: tuple[list[logging.LogRecord], pathlib.Path],
+):
+    records, pelican_output = setup_pelican
+
+    # check that the bibliography still gets build
+    publications_html = pelican_output / "publications.html"
+    assert publications_html.exists()
+
+    with publications_html.open() as f:
+        soup = BeautifulSoup(f, "html.parser")
+
+    div = soup.find_all("div", id="pybtex")
+    assert len(div) == 1
+
+    _assert_log_contains(
+        records,
+        message="Failed to import custom style 'custom_bibtex_style.NotAvailable'",
+        level=logging.ERROR,
+        count=1,
+    )
+    _assert_log_contains(
+        records,
+        message="Unsupported formatting style 'custom_bibtex_style.NotAvailable', defaulting to 'plain'",
+        level=logging.ERROR,
+        count=1,
+    )
+
+
+@pytest.mark.parametrize("subdir", ["custom-style"])
+def test_custom_style(setup_pelican: tuple[list[logging.LogRecord], pathlib.Path]):
+    records, pelican_output = setup_pelican
+
+    publications_html = pelican_output / "publications.html"
+    assert publications_html.exists()
+
+    with publications_html.open() as f:
+        soup = BeautifulSoup(f, "html.parser")
+
+    div = soup.find_all("div", id="pybtex")
+    assert len(div) == 1
+
+    details = div[0].find_all("details")
+
+    for detail in details:
+        # we should find the names given in custom_bibtex_style in the strong tag
+        assert detail.find("strong").text == "Ehrlich, A."
+
+    _assert_log_no_errors(records)
+    _assert_log_contains(
+        records,
+        message="plugin detected 2 entries spread across 1 source file",
+        level=logging.INFO,
+        count=1,
+    )

@@ -19,12 +19,10 @@ jobs:
           retry: true
           linksToSkip: https://pypi.org/project/pelican-pybtex/
       - name: Setup pixi
-        uses: prefix-dev/setup-pixi@v0.8.1
+        uses: prefix-dev/setup-pixi@v0.9.4
         with:
-          pixi-version: v0.35.0
+          pixi-version: v0.65.0
           cache: true
-          auth-host: prefix.dev
-          auth-token: ${{ secrets.PREFIX_DEV_TOKEN }}
       - name: Run qa
         run: pixi run -e qa qa
   test:
@@ -43,12 +41,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }} & Pixi
-        uses: prefix-dev/setup-pixi@v0.8.1
+        uses: prefix-dev/setup-pixi@v0.9.4
         with:
-          pixi-version: v0.35.0
+          pixi-version: v0.65.0
           cache: true
-          auth-host: prefix.dev
-          auth-token: ${{ secrets.PREFIX_DEV_TOKEN }}
       - name: Run tests
         run: pixi run -e test${{ matrix.python-version }} test-ci
         env:
@@ -97,12 +93,10 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
       - name: Setup pixi
-        uses: prefix-dev/setup-pixi@v0.8.1
+        uses: prefix-dev/setup-pixi@v0.9.4
         with:
-          pixi-version: v0.35.0
+          pixi-version: v0.65.0
           cache: true
-          auth-host: prefix.dev
-          auth-token: ${{ secrets.PREFIX_DEV_TOKEN }}
       - name: Build a binary wheel and a source tarball
         run: pixi run -e build build
       - name: Check distribution
